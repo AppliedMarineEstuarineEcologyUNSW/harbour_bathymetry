@@ -44,4 +44,19 @@ aggregate.interpolate.Tps<-function(raster, aggregate.factor){
 }
 
 
+interpolate.plot.with.mask<-function(mask.points, model, mask, ncol,nrow){
+  p<-raster(mask.points)
+  extent(p)<-extent(mask.points)
+  ncol(p)<-ncol
+  nrow(p)<-nrow
+  p<-interpolate(p,model)
+  p<-mask(p, mask)
+  return(p)
+}
+
+
+
+
+
+
 

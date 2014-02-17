@@ -12,6 +12,7 @@ library(gstat)
 library(fields)
 library(rgl)
 library(rasterVis)
+library(ggplot2)
 
 ##Read In Data
 sound_rms<- readOGR ("Data", "sh_soundings_not_spc_mga") ##read in the Shapefile
@@ -35,5 +36,25 @@ sounding.raster<-point.rast(soundings,pj.points,1000,1000)
 ##rasterise point data using mean depth per cell
 pj.rast<-raster.and.mask(pj.points,sounding.raster,pj.points$z, mean, Port_Jackson_catchment)
 
-##aggregate cells and interpolate using Thin Spline Regression
+##aggregate cells and create a Thin Spline Regression to interpolate onto new raster
 interpolated.bathymetry<-aggregate.interpolate.Tps(pj.rast,10)
+
+###interpolate bathymetry in sydney harbour on a 1000x1000 raster
+bathy<-interpolate.plot.with.mask(pj.points, interpolated.bathymetry, Port_Jackson_catchment,1000,1000)
+
+
+##Plotting bathymetry
+pdf(file="/Users/lukehedge/Dropbox/SHRP/Catlin_Seaview_Survey/Output/Sydney_Harbour_Bathymetry.pdf", width=16, height=11)
+par(adj=0,cex.main=0.8,  oma=c(0,0,0,0), omi=c(0,0,0,0))
+plot(bathy, axes=FALSE, col=colorRampPalette(c("blue", "white", "green"))(255))
+title(main="Depths Sydney Harbour - Thin Spline Interpolation")
+plot(Port_Jackson_catchment, add=T)
+dev.off()
+
+##plotting bathymetry ggplot
+p.p<-rasterToPoints(bathy)
+df = data.frame(p.p)
+colnames(df) = c("lon", "lat", "z")
+g = ggplot( data=df) + geom_point(aes(x=lon, y=lat, color=z))
+g = g + theme_bw()+theme( axis.text.x = element_blank(), axis.text.y = element_blank(),  )
+g
