@@ -12,7 +12,6 @@ points.poly<-function(polygon,points){
   if(proj4string(polygon)!=proj4string(points)){
     print("CRS do not match")
   }
-
   inside.poly <- !is.na(over(points, as(polygon, "SpatialPolygons")))
   point.inside<-points[inside.poly, ]
   return(point.inside)
@@ -62,10 +61,12 @@ plot.with.limits<-function(plot, xlim, ylim, title){
 }
 
 
-par(adj=0,cex.main=0.8,  oma=c(0,0,0,0), omi=c(0,0,0,0))
-plot(bathy, axes=TRUE, col=colorRampPalette(c("blue", "white", "green"))(500))
-title(main="Depths Sydney Harbour - Thin Spline Interpolation")
-plot(Port_Jackson_catchment, add=T)
+raster.to.xyz<-function(raster){
+  xy<-data.frame(xyFromCell(raster, 1:ncell(raster)))
+  v<-getValues(raster)
+  df<-data.frame(x=xy$x,y=xy$y,z=v)
+  return(df)
+}
 
 
 

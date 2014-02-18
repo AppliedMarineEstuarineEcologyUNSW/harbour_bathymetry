@@ -13,6 +13,7 @@ library(fields)
 library(rgl)
 library(rasterVis)
 library(ggplot2)
+library(marmap)
 
 source("R/functions.R")
 
@@ -54,12 +55,16 @@ plot(Port_Jackson_catchment, add=T)
 dev.off()
 
 
+
 #####
 #individual dive profiles
 #####
 
-plot.with.limits(bathy, xlim=c(338076.73 , 339821.33), ylim=c(6253660.13,6255658.90), title="Chowder Bay Dive")
-coords(bathy)
+P<-plot.with.limits(bathy, xlim=c(338076.73 , 339821.33), ylim=c(6253660.13,6255658.90), title="Chowder Bay Dive")
+rd<- bathy <= -5 & bathy >=4
+plot(rd)
+  
+
 
 
 
