@@ -55,6 +55,18 @@ interpolate.plot.with.mask<-function(mask.points, model, mask, ncol,nrow){
 }
 
 
+plot.with.limits<-function(plot, xlim, ylim, title){
+  par(adj=0,cex.main=0.8,  oma=c(0,0,0,0), omi=c(0,0,0,0))
+  plot(plot,axes=TRUE, col=colorRampPalette(c("blue", "white"))(500), xlim=xlim,ylim=ylim)
+  title(paste(title))
+}
+
+
+par(adj=0,cex.main=0.8,  oma=c(0,0,0,0), omi=c(0,0,0,0))
+plot(bathy, axes=TRUE, col=colorRampPalette(c("blue", "white", "green"))(500))
+title(main="Depths Sydney Harbour - Thin Spline Interpolation")
+plot(Port_Jackson_catchment, add=T)
+
 
 
 

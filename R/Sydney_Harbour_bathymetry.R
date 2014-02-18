@@ -14,8 +14,8 @@ library(rasterVis)
 
 
 #read in spatial data
-sound_rms<- readOGR (".", "sh_soundings_not_spc_mga") ##read in the Shapefile
-sound_spc<-read.csv("Sydney Harbour overall 5m.csv", header=F)
+sound_rms<- readOGR ("Data", "sh_soundings_not_spc_mga") ##read in the Shapefile
+sound_spc<-read.csv("Data/Sydney_Harbour_SPC_5m_grid.csv", header=F)
 colnames(sound_spc)<-c("x","y","z")
 
 
@@ -29,13 +29,12 @@ proj4string(sound)<-proj4string(sound_rms)
 
 
 ##just deal with the Outer Port Jackson Estuary
-est<- readOGR(".","Sydney_harbour_estuaries_catchments_4")
+est<- readOGR("Data","Sydney_harbour_estuaries_catchments_4")
 est<-spTransform(est,CRS(proj4string(sound)))
 est.pj<-est[est$NAMETYPE=="PORT JACKSON ESTUARY",]
-plot(est.pj)
 inside.pj <- !is.na(over(sound, as(est.pj, "SpatialPolygons")))
 sound.pj<-sound[inside.pj, ]
-
+summary(sound.pj)
 
 ###Create a raster of sounding data
 #set extents of the raster
@@ -44,8 +43,10 @@ extent(rast) <- extent(sound.pj)
 ncol(rast) <- 1000
 nrow(rast) <- 1000
 
+rast.test<-point.rast(rast.test,sound.pj, 1000,1000)
+
 #rasterise the depth data (mean depth in each of the 1000x1000 pixels of the raster)
-rast2 <- rasterize(sound.pj, rast, sound.pj$z, fun=mean)
+rast2 <- rasterize(sound.pj, rast.test, sound.pj$z, fun=mean)
 pj.rast <- crop(rast2, extent(est.pj))
 pj.rast <- mask(pj.rast, est.pj) #mask raster so that only pixels within the PJ polygon are included
 plot(pj.rast) #plot the raw data

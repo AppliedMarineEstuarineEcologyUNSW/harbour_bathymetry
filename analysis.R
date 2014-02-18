@@ -14,6 +14,8 @@ library(rgl)
 library(rasterVis)
 library(ggplot2)
 
+source("R/functions.R")
+
 ##Read In Data
 sound_rms<- readOGR ("Data", "sh_soundings_not_spc_mga") ##read in the Shapefile
 sound_spc<-read.csv("Data/Sydney_Harbour_SPC_5m_grid.csv", header=F)
@@ -46,15 +48,26 @@ bathy<-interpolate.plot.with.mask(pj.points, interpolated.bathymetry, Port_Jacks
 ##Plotting bathymetry
 pdf(file="/Users/lukehedge/Dropbox/SHRP/Catlin_Seaview_Survey/Output/Sydney_Harbour_Bathymetry.pdf", width=16, height=11)
 par(adj=0,cex.main=0.8,  oma=c(0,0,0,0), omi=c(0,0,0,0))
-plot(bathy, axes=FALSE, col=colorRampPalette(c("blue", "white", "green"))(255))
+plot(bathy, axes=TRUE, col=colorRampPalette(c("blue", "white", "green"))(255))
 title(main="Depths Sydney Harbour - Thin Spline Interpolation")
 plot(Port_Jackson_catchment, add=T)
 dev.off()
 
-##plotting bathymetry ggplot
-p.p<-rasterToPoints(bathy)
-df = data.frame(p.p)
-colnames(df) = c("lon", "lat", "z")
-g = ggplot( data=df) + geom_point(aes(x=lon, y=lat, color=z))
-g = g + theme_bw()+theme( axis.text.x = element_blank(), axis.text.y = element_blank(),  )
-g
+
+#####
+#individual dive profiles
+#####
+
+plot.with.limits(bathy, xlim=c(338076.73 , 339821.33), ylim=c(6253660.13,6255658.90), title="Chowder Bay Dive")
+coords(bathy)
+
+
+
+
+
+
+
+
+
+
+
